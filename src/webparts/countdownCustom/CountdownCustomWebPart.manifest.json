@@ -1,6 +1,6 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
-  "id": "PASTE-NEW-GUID-HERE",
+  "id": "5c26d725-6984-48eb-bb21-3bb7c05c6748",
   "alias": "CountdownCustomWebPart",
   "componentType": "WebPart",
   "version": "*",

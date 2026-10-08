@@ -2,8 +2,8 @@
   "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
   "solution": {
     "name": "custom-countdown-client-side-solution",
-    "id": "5c26d725-6984-48eb-bb21-3bb7c05c6748",
-    "version": "1.0.0.0",
+    "id": "e1533e48-7f11-4f89-af34-66bcfce6b4b0",
+    "version": "1.0.0.1",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
