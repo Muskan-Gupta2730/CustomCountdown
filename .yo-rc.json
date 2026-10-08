@@ -1,0 +1,19 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "useGulp": false,
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "24.19.0",
+    "sdksVersions": {},
+    "version": "1.23.2",
+    "libraryName": "custom-countdown",
+    "libraryId": "5c26d725-6984-48eb-bb21-3bb7c05c6748",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "custom-countdown",
+    "solutionShortDescription": "custom-countdown description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}

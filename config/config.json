@@ -1,0 +1,19 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "countdown-custom-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/countdownCustom/CountdownCustomWebPart.js",
+          "manifest": "./src/webparts/countdownCustom/CountdownCustomWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "CountdownCustomWebPartStrings": "lib/webparts/countdownCustom/loc/{locale}.js",
+    "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js"
+  }
+}
