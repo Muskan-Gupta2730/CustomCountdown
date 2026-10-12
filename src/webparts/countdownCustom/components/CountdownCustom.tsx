@@ -6,7 +6,8 @@ import { ICountdownCustomProps } from './ICountdownCustomProps';
 
 interface IListRow {
   Title: string;
-  DataTime: string;
+  DataTime?: string;
+  DateTime?: string;
   ApplyLink: { Url: string; Description: string } | undefined;
   isActive: string;
   PageLinks: string | undefined;
@@ -62,10 +63,9 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
     setError('');
 
     const safeTitle = encodeURIComponent(props.listTitle.replace(/'/g, "''"));
-    const url =
+       const url =
       `${props.siteUrl}/_api/web/lists/getbytitle('${safeTitle}')/items` +
-      `?$select=Title,DataTime,ApplyLink,isActive,PageLinks` +
-      `&$filter=isActive eq 'Yes'&$orderby=DataTime asc&$top=100`;
+      `?$filter=isActive eq 'Yes'&$top=100`;
 
     props.spHttpClient
       .get(url, SPHttpClient.configurations.v1)
@@ -96,7 +96,7 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
           .map((r) => ({
             title: r.Title,
             link: r.ApplyLink ? r.ApplyLink.Url : '',
-            targetMs: new Date(r.DataTime).getTime(), // ISO string from SharePoint is UTC
+                       targetMs: new Date(r.DateTime || r.DataTime || '').getTime(),
           }))
           .filter((i) => !isNaN(i.targetMs))
           .sort((a, b) => a.targetMs - b.targetMs);
