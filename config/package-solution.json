@@ -3,7 +3,7 @@
   "solution": {
     "name": "custom-countdown-client-side-solution",
     "id": "e1533e48-7f11-4f89-af34-66bcfce6b4b0",
-    "version": "1.0.0.1",
+    "version": "2.0.0.0",
     "includeClientSideAssets": true,
     "skipFeatureDeployment": true,
     "isDomainIsolated": false,
