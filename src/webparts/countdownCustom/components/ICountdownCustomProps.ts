@@ -4,6 +4,7 @@ export interface ICountdownCustomWebPartProps {
   listTitle: string;
   label: string;
   buttonText: string;
+  description: string;
   expiredMessage: string;
   backgroundImageUrl: string;
   overlayOpacity: number;

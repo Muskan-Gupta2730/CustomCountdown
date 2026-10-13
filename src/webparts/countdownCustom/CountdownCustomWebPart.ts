@@ -33,11 +33,12 @@ export default class CountdownCustomWebPart extends BaseClientSideWebPart<ICount
 
   protected onInit(): Promise<void> {
     const p = this.properties;
-    p.listTitle = p.listTitle ?? 'CountdownEvents';
-    p.label = p.label ?? 'Applications close in';
-    p.buttonText = p.buttonText ?? 'Apply Now';
-    p.expiredMessage = p.expiredMessage ?? 'Applications are now closed';
-    p.overlayOpacity = p.overlayOpacity ?? 85;
+    p.listTitle        = p.listTitle        ?? 'CountdownEvents';
+    p.label            = p.label            ?? 'Applications close in';
+    p.buttonText       = p.buttonText       ?? 'Apply now';
+    p.description      = p.description      ?? '';
+    p.expiredMessage   = p.expiredMessage   ?? 'Applications are now closed';
+    p.overlayOpacity   = p.overlayOpacity   ?? 85;
     p.backgroundImageUrl = p.backgroundImageUrl ?? '';
     return Promise.resolve();
   }
@@ -61,10 +62,15 @@ export default class CountdownCustomWebPart extends BaseClientSideWebPart<ICount
               groupFields: [
                 PropertyPaneTextField('listTitle', {
                   label: 'SharePoint list name',
-                  description: 'Columns: Title, DataTime, ApplyLink, isActive, PageLinks',
+                  description: 'Columns: Title, DateTime, Description, ApplyLink, isActive, PageLinks',
                 }),
-                PropertyPaneTextField('label', { label: 'Small heading' }),
-                PropertyPaneTextField('buttonText', { label: 'Button text' }),
+                PropertyPaneTextField('label', { label: 'Small heading (e.g. "Applications close in")' }),
+                PropertyPaneTextField('description', {
+                  label: 'Description text (fallback if not in list)',
+                  multiline: true,
+                  rows: 3,
+                }),
+                PropertyPaneTextField('buttonText', { label: 'Button text (e.g. "Apply now")' }),
                 PropertyPaneTextField('expiredMessage', { label: 'Message after countdown ends' }),
               ],
             },
@@ -78,7 +84,7 @@ export default class CountdownCustomWebPart extends BaseClientSideWebPart<ICount
                   accepts: ['.png', '.jpg', '.jpeg', '.webp', '.svg'],
                   hideLocalUploadTab: false,
                   hideSiteFilesTab: false,
-                  hideStockImages: false,
+                  hideStockImages: true,
                   hideOneDriveTab: true,
                   hideWebSearchTab: true,
                   hideLinkUploadTab: false,
