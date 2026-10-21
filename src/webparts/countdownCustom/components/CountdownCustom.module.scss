@@ -7,14 +7,14 @@
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── Design tokens ────────────────────────────────────────────────────────────
-$navy:        #150056;   // dark navy text / countdown box bg
-$purple:      #AE42F4;   // accent – label text, button bg, closes label
-$card-bg:     #ffffff;   // outer card background (left panel)
+$navy:        #120052;   // dark navy text, button & countdown box bg
+$purple:      #b038f4;   // accent – top label text
+$card-bg:     #ffffff;   // outer card background
 $grey-bg:     #f4f4f8;   // outer wrapper tint
 $text-body:   #555566;   // description paragraph
 $tile-num:    #ffffff;   // digit colour inside navy box
-$tile-label:  #a8a8c8;   // DAYS / HOURS … label inside navy box
-$closes-col:  #7b3fe4;   // "CLOSES …" text colour inside navy box
+$tile-label:  #8c8cb8;   // DAYS / HOURS … label inside navy box
+$closes-col:  #6FF0EE;   // closing date colour inside navy box
 
 // ─────────────────────────────────────────────────────────────────────────────
 .wrapper {
@@ -27,13 +27,13 @@ $closes-col:  #7b3fe4;   // "CLOSES …" text colour inside navy box
   *, *::before, *::after { box-sizing: border-box; }
 }
 
-// ── Outer card (white rounded box with optional background image) ─────────────
+// ── Outer card (white rounded box with background image) ─────────────────────
 .card {
   position: relative;
   background: $card-bg;
   border-radius: 14px;
   overflow: hidden;
-  box-shadow: 0 2px 16px rgba(26, 17, 80, 0.10);
+  box-shadow: 0 2px 16px rgba(18, 0, 82, 0.08);
 }
 
 .bgImage {
@@ -41,7 +41,9 @@ $closes-col:  #7b3fe4;   // "CLOSES …" text colour inside navy box
   inset: 0;
   background-size: cover;
   background-position: center right;
+  background-repeat: no-repeat;
   border-radius: 14px;
+  pointer-events: none;
 }
 
 .bgOverlay {
@@ -58,8 +60,9 @@ $closes-col:  #7b3fe4;   // "CLOSES …" text colour inside navy box
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
-  gap: 32px;
-  padding: 36px 44px 36px 44px;
+  justify-content: space-between;
+  gap: 36px;
+  padding: 38px 46px;
 }
 
 // ── LEFT: text block ──────────────────────────────────────────────────────────
@@ -68,45 +71,46 @@ $closes-col:  #7b3fe4;   // "CLOSES …" text colour inside navy box
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
 .topLabel {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 2.2px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 2.4px;
   text-transform: uppercase;
   color: $purple;
   margin: 0 0 2px;
 }
 
 .title {
-  font-size: 30px;
-  font-weight: 700;
-  line-height: 1.25;
+  font-size: 32px;
+  font-weight: 800;
+  line-height: 1.2;
   color: $navy;
   margin: 0;
+  letter-spacing: -0.4px;
 }
 
 .description {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.55;
   color: $text-body;
-  margin: 0 0 6px;
-  max-width: 400px;
+  margin: 0 0 8px;
+  max-width: 440px;
 }
 
-// ── Pill button ───────────────────────────────────────────────────────────────
+// ── Rectangular button (#120052, border-radius 6px) ──────────────────────────
 .applyBtn {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  background: $purple;
+  justify-content: center;
+  background: #120052;
   color: #ffffff !important;
   text-decoration: none !important;
-  padding: 12px 28px;
-  border-radius: 999px;
-  font-size: 15px;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
   font-weight: 600;
   width: fit-content;
   transition: opacity 0.15s ease, transform 0.15s ease;
@@ -114,50 +118,46 @@ $closes-col:  #7b3fe4;   // "CLOSES …" text colour inside navy box
   border: none;
 
   &:hover {
-    opacity: 0.88;
+    opacity: 0.90;
     transform: translateY(-1px);
-  }
-
-  .arrow {
-    font-size: 16px;
-    line-height: 1;
   }
 }
 
 // ── RIGHT: dark navy countdown box ───────────────────────────────────────────
 .countdownBox {
   flex: 0 0 auto;
-  background: $navy;
-  border-radius: 14px;
-  padding: 22px 28px 24px;
+  background: #120052;
+  border-radius: 16px;
+  padding: 24px 34px 26px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
-  min-width: 340px;
+  gap: 16px;
+  min-width: 380px;
 }
 
 .closesLabel {
-  font-size: 11px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 2px;
+  letter-spacing: 2.2px;
   text-transform: uppercase;
-  color: $closes-col;
+  color: #6FF0EE;
 }
 
-// ── Digit tiles row ───────────────────────────────────────────────────────────
+// ── Digit tiles row (no colons, cleanly spaced) ──────────────────────────────
 .tilesRow {
   display: flex;
-  gap: 10px;
+  gap: 28px;
   align-items: flex-end;
+  justify-content: center;
 }
 
 .tile {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
-  min-width: 64px;
+  gap: 6px;
+  min-width: 58px;
 }
 
 .tileNum {
@@ -172,7 +172,7 @@ $closes-col:  #7b3fe4;   // "CLOSES …" text colour inside navy box
 .tileLabel {
   font-size: 11px;
   font-weight: 600;
-  letter-spacing: 1.8px;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: $tile-label;
   margin-top: 2px;

@@ -6,19 +6,24 @@ import { ICountdownCustomProps } from './ICountdownCustomProps';
 
 // ─── SharePoint list row shape ────────────────────────────────────────────────
 interface IListRow {
-  Title: string;
+  Title?: string;
+  EventDescription?: string;
+  MoreDescription?: string;
+  Description?: string;
   DataTime?: string;
   DateTime?: string;
-  Description?: string;
-  ApplyLink?: { Url: string; Description: string };
+  ApplyLink?: { Url: string; Description: string } | string;
+  ButtonText?: string;
   isActive: string;
   PageLinks?: string;
+  PageName?: string;
 }
 
 interface ICountdownItem {
   title: string;
   description: string;
   link: string;
+  buttonText: string;
   targetMs: number;
 }
 
@@ -42,7 +47,11 @@ const normalizePath = (value: string): string => {
   return p.replace(/\/+$/, '').toLowerCase();
 };
 
-// ─────────────────────────────────────────────────────────────────────────────
+// ── Default background image ─────────────────────────────────────────────────
+const rawBg: any = require('./assets/bg.png');
+const defaultBgImage: string =
+  typeof rawBg === 'string' ? rawBg : (rawBg && rawBg.default) ? rawBg.default : '';
+
 const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
   const [items, setItems]   = React.useState<ICountdownItem[]>([]);
   const [loading, setLoading] = React.useState<boolean>(false);
@@ -86,12 +95,35 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
         });
 
         const list: ICountdownItem[] = matched
-          .map((r) => ({
-            title:       r.Title,
-            description: r.Description || '',
-            link:        r.ApplyLink ? r.ApplyLink.Url : '',
-            targetMs:    new Date(r.DateTime || r.DataTime || '').getTime(),
-          }))
+          .map((r) => {
+            let linkUrl = '';
+            let btnLabel = '';
+
+            if (r.ApplyLink) {
+              if (typeof r.ApplyLink === 'object' && r.ApplyLink) {
+                linkUrl = r.ApplyLink.Url || '';
+                const desc = (r.ApplyLink.Description || '').trim();
+                // If the hyperlink description is not just the URL, use it as button text
+                if (desc && !desc.startsWith('http://') && !desc.startsWith('https://')) {
+                  btnLabel = desc;
+                }
+              } else if (typeof r.ApplyLink === 'string') {
+                linkUrl = r.ApplyLink.trim();
+              }
+            }
+
+            if (r.ButtonText && r.ButtonText.trim()) {
+              btnLabel = r.ButtonText.trim();
+            }
+
+            return {
+              title:       (r.EventDescription || r.Title || '').trim(),
+              description: (r.MoreDescription || r.Description || '').trim(),
+              link:        linkUrl,
+              buttonText:  btnLabel,
+              targetMs:    new Date(r.DateTime || r.DataTime || '').getTime(),
+            };
+          })
           .filter((i) => !isNaN(i.targetMs))
           .sort((a, b) => a.targetMs - b.targetMs);
 
@@ -151,23 +183,18 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
 
   // Description: prefer list data, fallback to webpart property
   const descriptionText = item.description || props.description || '';
+  const activeBg = props.backgroundImageUrl || defaultBgImage;
 
   return (
     <div className={styles.wrapper}>
       <div className={styles.card}>
 
-        {/* ── Optional background image + overlay ─────────────────────────── */}
-        {props.backgroundImageUrl && (
-          <>
-            <div
-              className={styles.bgImage}
-              style={{ backgroundImage: `url("${props.backgroundImageUrl}")` }}
-            />
-            <div
-              className={styles.bgOverlay}
-              style={{ opacity: (props.overlayOpacity ?? 85) / 100 }}
-            />
-          </>
+        {/* ── Background image ─────────────────────────── */}
+        {activeBg && (
+          <div
+            className={styles.bgImage}
+            style={{ backgroundImage: `url("${activeBg}")` }}
+          />
         )}
 
         {/* ── Main content row ─────────────────────────────────────────────── */}
@@ -175,7 +202,9 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
 
           {/* LEFT – text block */}
           <div className={styles.textBlock}>
-            <p className={styles.topLabel}>{props.label || 'Applications close in'}</p>
+            {!expired && (
+              <p className={styles.topLabel}>{props.label || 'Nominations close in'}</p>
+            )}
             <h2 className={styles.title}>{item.title}</h2>
             {descriptionText && (
               <p className={styles.description}>{descriptionText}</p>
@@ -188,8 +217,7 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
                 rel="noopener noreferrer"
                 data-interception="off"
               >
-                {props.buttonText || 'Apply now'}
-                <span className={styles.arrow} aria-hidden="true">›</span>
+                {item.buttonText || props.buttonText || 'Apply now'}
               </a>
             )}
           </div>
@@ -197,26 +225,17 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
           {/* RIGHT – countdown box */}
           <div className={styles.countdownBox}>
             <span className={styles.closesLabel}>
-              Closes {formatCloses(item.targetMs)}
+              {expired ? `CLOSED ${formatCloses(item.targetMs)}` : `CLOSES ${formatCloses(item.targetMs)}`}
             </span>
 
-            {expired ? (
-              <div className={styles.expiredText}>{props.expiredMessage || 'Applications are now closed'}</div>
-            ) : (
-              <div className={styles.tilesRow}>
-                {units.map((u, idx) => (
-                  <React.Fragment key={u.l}>
-                    <div className={styles.tile}>
-                      <span className={styles.tileNum}>{pad(u.v)}</span>
-                      <span className={styles.tileLabel}>{u.l}</span>
-                    </div>
-                    {idx < units.length - 1 && (
-                      <span className={styles.separator} aria-hidden="true"></span>
-                    )}
-                  </React.Fragment>
-                ))}
-              </div>
-            )}
+            <div className={styles.tilesRow}>
+              {units.map((u) => (
+                <div className={styles.tile} key={u.l}>
+                  <span className={styles.tileNum}>{pad(u.v)}</span>
+                  <span className={styles.tileLabel}>{u.l}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
         </div>

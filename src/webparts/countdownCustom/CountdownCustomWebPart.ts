@@ -3,15 +3,12 @@ import * as ReactDom from 'react-dom';
 import { Version, DisplayMode } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
+  PropertyPaneDropdown,
+  IPropertyPaneDropdownOption,
   PropertyPaneTextField,
-  PropertyPaneSlider,
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-
-import {
-  PropertyFieldFilePicker,
-  IFilePickerResult,
-} from '@pnp/spfx-property-controls/lib/PropertyFieldFilePicker';
+import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 
 import CountdownCustom from './components/CountdownCustom';
 import {
@@ -20,6 +17,11 @@ import {
 } from './components/ICountdownCustomProps';
 
 export default class CountdownCustomWebPart extends BaseClientSideWebPart<ICountdownCustomWebPartProps> {
+  private _listOptions: IPropertyPaneDropdownOption[] = [
+    { key: 'CountdownEvents', text: 'CountdownEvents' },
+  ];
+  private _listsFetched: boolean = false;
+  private _listsLoading: boolean = false;
 
   public render(): void {
     const element = React.createElement<ICountdownCustomProps>(CountdownCustom, {
@@ -33,14 +35,54 @@ export default class CountdownCustomWebPart extends BaseClientSideWebPart<ICount
 
   protected onInit(): Promise<void> {
     const p = this.properties;
-    p.listTitle        = p.listTitle        ?? 'CountdownEvents';
-    p.label            = p.label            ?? 'Applications close in';
-    p.buttonText       = p.buttonText       ?? 'Apply now';
-    p.description      = p.description      ?? '';
-    p.expiredMessage   = p.expiredMessage   ?? 'Applications are now closed';
-    p.overlayOpacity   = p.overlayOpacity   ?? 85;
-    p.backgroundImageUrl = p.backgroundImageUrl ?? '';
+    p.listTitle        = p.listTitle        || 'CountdownEvents';
+    p.label            = p.label            || 'Application closes in';
+    p.buttonText       = p.buttonText       || 'Apply now';
+    p.description      = p.description      || '';
+    p.expiredMessage   = p.expiredMessage   || 'Applications are now closed';
+    p.overlayOpacity   = p.overlayOpacity   ?? 0;
+    p.backgroundImageUrl = p.backgroundImageUrl || '';
     return Promise.resolve();
+  }
+
+  protected onPropertyPaneConfigurationStart(): void {
+    if (this.properties.listTitle && !this._listOptions.some((o) => o.key === this.properties.listTitle)) {
+      this._listOptions.unshift({ key: this.properties.listTitle, text: this.properties.listTitle });
+    }
+    this._loadLists();
+  }
+
+  private _loadLists(): void {
+    if (this._listsFetched || this._listsLoading) return;
+    this._listsLoading = true;
+
+    const url = `${this.context.pageContext.web.absoluteUrl}/_api/web/lists?$filter=Hidden eq false&$select=Title&$orderby=Title`;
+    this.context.spHttpClient
+      .get(url, SPHttpClient.configurations.v1)
+      .then((res: SPHttpClientResponse) => {
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        return res.json();
+      })
+      .then((data: { value: Array<{ Title: string }> }) => {
+        const fetched: IPropertyPaneDropdownOption[] = (data.value || []).map((l) => ({
+          key: l.Title,
+          text: l.Title,
+        }));
+        if (this.properties.listTitle && !fetched.some((o) => o.key === this.properties.listTitle)) {
+          fetched.unshift({ key: this.properties.listTitle, text: this.properties.listTitle });
+        }
+        if (fetched.length > 0) {
+          this._listOptions = fetched;
+        }
+        this._listsFetched = true;
+        this._listsLoading = false;
+        this.context.propertyPane.refresh();
+      })
+      .catch((err) => {
+        console.warn('Could not load SharePoint lists for property pane dropdown:', err);
+        this._listsFetched = true;
+        this._listsLoading = false;
+      });
   }
 
   protected onDispose(): void {
@@ -58,62 +100,17 @@ export default class CountdownCustomWebPart extends BaseClientSideWebPart<ICount
           header: { description: 'Countdown settings' },
           groups: [
             {
-              groupName: 'Data source & text',
+              groupName: 'List configuration',
               groupFields: [
-                PropertyPaneTextField('listTitle', {
-                  label: 'SharePoint list name',
-                  description: 'Columns: Title, DateTime, Description, ApplyLink, isActive, PageLinks',
+                PropertyPaneDropdown('listTitle', {
+                  label: 'Select list',
+                  options: this._listOptions,
+                  selectedKey: this.properties.listTitle,
                 }),
-                PropertyPaneTextField('label', { label: 'Small heading (e.g. "Applications close in")' }),
                 PropertyPaneTextField('description', {
                   label: 'Description text (fallback if not in list)',
                   multiline: true,
                   rows: 3,
-                }),
-                PropertyPaneTextField('buttonText', { label: 'Button text (e.g. "Apply now")' }),
-                PropertyPaneTextField('expiredMessage', { label: 'Message after countdown ends' }),
-              ],
-            },
-            {
-              groupName: 'Background image',
-              groupFields: [
-                PropertyFieldFilePicker('backgroundImage', {
-                  context: this.context as any,
-                  filePickerResult: undefined as unknown as IFilePickerResult,
-                  buttonLabel: 'Upload / choose image',
-                  accepts: ['.png', '.jpg', '.jpeg', '.webp', '.svg'],
-                  hideLocalUploadTab: false,
-                  hideSiteFilesTab: false,
-                  hideStockImages: true,
-                  hideOneDriveTab: true,
-                  hideWebSearchTab: true,
-                  hideLinkUploadTab: false,
-                  hideRecentTab: false,
-                  hideOrganisationalAssetTab: true,
-                  buttonIcon: 'FileImage',
-                  properties: this.properties,
-                  onPropertyChange: this.onPropertyPaneFieldChanged.bind(this),
-                  onSave: (r: IFilePickerResult) => {
-                    this.properties.backgroundImageUrl = r.fileAbsoluteUrl || '';
-                    this.render();
-                    this.context.propertyPane.refresh();
-                  },
-                  onChanged: (r: IFilePickerResult) => {
-                    this.properties.backgroundImageUrl = r.fileAbsoluteUrl || '';
-                    this.render();
-                    this.context.propertyPane.refresh();
-                  },
-                  key: 'bgImageField',
-                }),
-                PropertyPaneTextField('backgroundImageUrl', {
-                  label: 'Or paste image URL (clear to remove)',
-                }),
-                PropertyPaneSlider('overlayOpacity', {
-                  label: 'Panel colour overlay over image (%)',
-                  min: 0,
-                  max: 100,
-                  step: 5,
-                  showValue: true,
                 }),
               ],
             },
