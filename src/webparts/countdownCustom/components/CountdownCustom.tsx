@@ -3,6 +3,8 @@ import { SPHttpClient, SPHttpClientResponse } from '@microsoft/sp-http';
 
 import styles from './CountdownCustom.module.scss';
 import { ICountdownCustomProps } from './ICountdownCustomProps';
+import defaultBgImage from './assets/bg.png';
+
 
 // ─── SharePoint list row shape ────────────────────────────────────────────────
 interface IListRow {
@@ -47,10 +49,6 @@ const normalizePath = (value: string): string => {
   return p.replace(/\/+$/, '').toLowerCase();
 };
 
-// ── Default background image ─────────────────────────────────────────────────
-const rawBg: any = require('./assets/bg.png');
-const defaultBgImage: string =
-  typeof rawBg === 'string' ? rawBg : (rawBg && rawBg.default) ? rawBg.default : '';
 
 const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
   const [items, setItems]   = React.useState<ICountdownItem[]>([]);

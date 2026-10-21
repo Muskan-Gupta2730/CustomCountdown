@@ -8,7 +8,7 @@ export interface ICountdownCustomWebPartProps {
   expiredMessage: string;
   backgroundImageUrl: string;
   overlayOpacity: number;
-  backgroundImage?: any;
+  backgroundImage?: string;
 }
 
 export interface ICountdownCustomProps extends ICountdownCustomWebPartProps {
