@@ -9,6 +9,7 @@ import defaultBgImage from './assets/bg.png';
 // ─── SharePoint list row shape ────────────────────────────────────────────────
 interface IListRow {
   Title?: string;
+  Heading?: string;
   EventDescription?: string;
   MoreDescription?: string;
   Description?: string;
@@ -22,6 +23,7 @@ interface IListRow {
 }
 
 interface ICountdownItem {
+  heading: string;
   title: string;
   description: string;
   link: string;
@@ -115,6 +117,7 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
             }
 
             return {
+              heading:     (r.Heading || '').trim(),
               title:       (r.EventDescription || r.Title || '').trim(),
               description: (r.MoreDescription || r.Description || '').trim(),
               link:        linkUrl,
@@ -201,7 +204,7 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
           {/* LEFT – text block */}
           <div className={styles.textBlock}>
             {!expired && (
-              <p className={styles.topLabel}>{props.label || 'Nominations close in'}</p>
+              <p className={styles.topLabel}>{item.heading || props.label || 'Nominations close in'}</p>
             )}
             <h2 className={styles.title}>{item.title}</h2>
             {descriptionText && (
