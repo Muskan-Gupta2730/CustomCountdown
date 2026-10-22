@@ -201,15 +201,17 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
         {/* ── Main content row ─────────────────────────────────────────────── */}
         <div className={styles.inner}>
 
-          {/* LEFT – text block */}
-          <div className={styles.textBlock}>
-            {!expired && (
-              <p className={styles.topLabel}>{item.heading || props.label || 'Nominations close in'}</p>
-            )}
-            <h2 className={styles.title}>{item.title}</h2>
-            {descriptionText && (
-              <p className={styles.description}>{descriptionText}</p>
-            )}
+          {/* LEFT – text block + button wrapped for responsive reordering */}
+          <div className={styles.leftCol}>
+            <div className={styles.textBlock}>
+              {!expired && (
+                <p className={styles.topLabel}>{item.heading || props.label || 'Nominations close in'}</p>
+              )}
+              <h2 className={styles.title}>{item.title}</h2>
+              {descriptionText && (
+                <p className={styles.description}>{descriptionText}</p>
+              )}
+            </div>
             {!expired && item.link && (
               <a
                 className={styles.applyBtn}
