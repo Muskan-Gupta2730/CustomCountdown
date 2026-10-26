@@ -1,129 +1,107 @@
 // ─────────────────────────────────────────────────────────────────────────────
-// Sirva Life Excellence Award – Custom Countdown Web Part
-//   Left  : label (purple caps), bold navy title, grey description, navy button
-//   Right : dark-navy countdown box – cyan "CLOSES …" label, white digit tiles
+// Custom Countdown Web Part – matches screenshot design exactly
 // ─────────────────────────────────────────────────────────────────────────────
 
 // ── Design tokens ────────────────────────────────────────────────────────────
-$navy:        #120052;   // dark navy text, button & countdown box bg
-$purple:      #b038f4;   // accent – top label text
-$card-bg:     #ffffff;   // outer card background
-$grey-bg:     #f4f4f8;   // outer wrapper tint
-$text-body:   #555566;   // description paragraph
-$tile-num:    #ffffff;   // digit colour inside navy box
-$tile-label:  #a8a8cc;   // DAYS / HOURS … label inside navy box
-$closes-col:  #6FF0EE;   // closing date colour inside navy box
+$navy:       #120052;
+$purple:     #7b2ff7;   // purple for top label
+$card-bg:    #ffffff;
+$grey-bg:    #eef0f5;   // light grey outer wrapper
+$text-body:  #555566;
+$tile-num:   #ffffff;
+$tile-label: #9090bb;
+$closes-col: #6FF0EE;
 
 // ─────────────────────────────────────────────────────────────────────────────
 .wrapper {
+  position: relative;
   width: 100%;
   font-family: 'Segoe UI', 'Segoe UI Web (West European)', -apple-system, Roboto, sans-serif;
   box-sizing: border-box;
   background: $grey-bg;
-  padding: 20px 24px 28px;
+  padding: 16px 20px 20px;
 
   *, *::before, *::after { box-sizing: border-box; }
 }
 
-// ── Outer card (rounded box with background image) ───────────────────────────
+// ── Outer card ───────────────────────────────────────────────────────────────
 .card {
   position: relative;
-  min-height: 340px;               // taller card so the image is not cropped from the top
-  display: flex;
-  align-items: center;
   background: $card-bg;
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 16px rgba(18, 0, 82, 0.08);
+  box-shadow: 0 1px 8px rgba(18, 0, 82, 0.07);
   container-type: inline-size;
 }
 
-// Image fills the whole card, keeps its proportions (no stretching)
+// Background image – faded, right-anchored, contained
 .bgImage {
   position: absolute;
   inset: 0;
-  background-size: cover;
-  background-position: center center;
+  background-size: contain;
+  background-position: right center;
   background-repeat: no-repeat;
-  border-radius: 14px;
   pointer-events: none;
+  opacity: 0.18;
 }
 
-// Soft white wash so the text stays readable but the image still shows through
-.bgOverlay {
-  position: absolute;
-  inset: 0;
-  border-radius: 14px;
-  pointer-events: none;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0.92) 0%,
-    rgba(255, 255, 255, 0.85) 50%,
-    rgba(255, 255, 255, 0.80) 100%
-  );
-}
-
-// ── Inner content row ─────────────────────────────────────────────────────────
+// ── Inner row ─────────────────────────────────────────────────────────────────
 .inner {
   position: relative;
   z-index: 1;
-  width: 100%;
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
   justify-content: space-between;
-  gap: 48px;
-  padding: 48px 72px;
+  gap: 32px;
+  padding: 28px 36px;
 }
 
-// ── LEFT column wrapper (text block + button) ─────────────────────────────────
-// On desktop this groups the text and button in the left column.
-// On mobile it becomes display:contents so children reorder via flex order.
+// ── LEFT column ───────────────────────────────────────────────────────────────
 .leftCol {
   flex: 1 1 auto;
   min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 }
 
-// ── LEFT: text block ──────────────────────────────────────────────────────────
 .textBlock {
-  flex: 1 1 auto;
-  min-width: 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 8px;
 }
 
+// Small purple caps label
 .topLabel {
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: 3px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
   text-transform: uppercase;
   color: $purple;
-  margin: 0 0 6px;
+  margin: 0;
 }
 
+// Bold navy title – compact
 .title {
-  font-size: 40px;
+  font-size: 22px;
   font-weight: 700;
-  line-height: 1.15;
+  line-height: 1.25;
   color: $navy;
   margin: 0;
-  max-width: 540px;
-  letter-spacing: -0.3px;
+  max-width: 420px;
 }
 
+// Small grey description
 .description {
-  font-size: 20px;
+  font-size: 13px;
   line-height: 1.55;
   color: $text-body;
-  margin: 0 0 16px;
-  max-width: 540px;
+  margin: 0;
+  max-width: 380px;
 }
 
-// ── Rectangular button ────────────────────────────────────────────────────────
+// Compact dark navy button
 .applyBtn {
   display: inline-flex;
   align-items: center;
@@ -131,55 +109,54 @@ $closes-col:  #6FF0EE;   // closing date colour inside navy box
   background: $navy;
   color: #ffffff !important;
   text-decoration: none !important;
-  padding: 18px 30px;
+  padding: 10px 20px;
   border-radius: 6px;
-  font-size: 17px;
+  font-size: 13px;
   font-weight: 600;
   width: fit-content;
+  white-space: nowrap;
   transition: opacity 0.15s ease, transform 0.15s ease;
   cursor: pointer;
   border: none;
 
   &:hover {
-    opacity: 0.90;
+    opacity: 0.88;
     transform: translateY(-1px);
   }
 }
 
 // ── RIGHT: dark navy countdown box ───────────────────────────────────────────
 .countdownBox {
-  flex: 0 0 auto;
-  width: 54%;
-  min-width: 440px;
-  max-width: 100%;
+  flex: 1 1 52%;       // grows & shrinks with the available space
+  min-width: 300px;
+  max-width: 65%;      // never dominates the layout completely
   background: $navy;
-  border-radius: 16px;
-  padding: 30px 48px 28px;
+  border-radius: 12px;
+  padding: 20px 32px 20px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px;
+  gap: 12px;
   box-sizing: border-box;
 }
 
+// Cyan "CLOSES …" label
 .closesLabel {
-  font-size: 15px;
+  font-size: clamp(10px, 1cqi, 13px);
   font-weight: 700;
-  letter-spacing: 2.6px;
+  letter-spacing: 2.4px;
   text-transform: uppercase;
   color: $closes-col;
   text-align: center;
-  max-width: 100%;
 }
 
-// ── Digit tiles row (no colons, cleanly spaced) ──────────────────────────────
+// Tiles row
 .tilesRow {
   display: flex;
-  gap: 36px;
+  gap: 0;
   align-items: flex-end;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
-  max-width: 100%;
   box-sizing: border-box;
 }
 
@@ -187,75 +164,63 @@ $closes-col:  #6FF0EE;   // closing date colour inside navy box
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 8px;
-  min-width: 90px;
+  gap: 4px;
+  flex: 1 1 0;
   text-align: center;
 }
 
+// Large white numbers
 .tileNum {
-  font-size: 58px;
+  font-size: clamp(36px, 4cqi, 58px);  // scales with container width
   font-weight: 700;
   line-height: 1;
   color: $tile-num;
   font-variant-numeric: tabular-nums;
-  letter-spacing: -1px;
+  letter-spacing: -0.5px;
   white-space: nowrap;
 }
 
+// Small letter labels
 .tileLabel {
-  font-size: 14px;
-  font-weight: 400;
-  letter-spacing: 2.5px;
+  font-size: clamp(10px, 1.1cqi, 14px);
+  font-weight: 500;
+  letter-spacing: 2px;
   text-transform: uppercase;
   color: $tile-label;
-  margin-top: 2px;
   white-space: nowrap;
 }
 
-// ── Separator dots between tiles (optional) ──────────────────────────────────
+// ── Misc ──────────────────────────────────────────────────────────────────────
 .separator {
-  font-size: 44px;
-  font-weight: 700;
-  color: rgba(255, 255, 255, 0.25);
-  line-height: 1;
-  margin-bottom: 18px;
-  user-select: none;
+  display: none;
 }
 
-// ── Expired state ─────────────────────────────────────────────────────────────
 .expiredText {
-  font-size: 20px;
+  font-size: 18px;
   font-weight: 700;
   color: $tile-num;
   text-align: center;
-  padding: 8px 0;
 }
 
-// ── Loading / error fallback ──────────────────────────────────────────────────
 .message {
-  padding: 24px 32px;
-  font-size: 15px;
+  padding: 20px 28px;
+  font-size: 14px;
   color: $navy;
 }
 
-// ── Responsive (Tablet & Mobile) ─────────────────────────────────────────────
+// ── Tablet (≤ 820px) ─────────────────────────────────────────────────────────
 @media (max-width: 820px) {
   .wrapper {
-    padding: 16px 14px 20px;
-  }
-
-  .card {
-    min-height: 0;
+    padding: 12px 12px 16px;
   }
 
   .inner {
     flex-direction: column;
     align-items: stretch;
-    padding: 28px 20px;
-    gap: 24px;
+    padding: 24px 20px;
+    gap: 18px;
   }
 
-  // Flatten leftCol so its children become flex items of .inner for ordering
   .leftCol {
     display: contents;
   }
@@ -266,105 +231,146 @@ $closes-col:  #6FF0EE;   // closing date colour inside navy box
 
   .countdownBox {
     order: 2;
-    min-width: 0;
     width: 100%;
+    min-width: 0;
     max-width: 100%;
-    padding: 20px 16px 22px;
-    border-radius: 14px;
+    padding: 16px 16px 18px;
   }
 
   .applyBtn {
     order: 3;
     width: 100%;
-    padding: 14px 24px;
-    font-size: 14px;
-  }
-
-  .topLabel {
+    padding: 12px 20px;
     font-size: 13px;
-    letter-spacing: 2.4px;
   }
 
   .title {
-    font-size: 26px;
+    font-size: 20px;
     max-width: 100%;
   }
 
   .description {
-    font-size: 15px;
     max-width: 100%;
-    margin: 0 0 8px;
-  }
-
-  .tilesRow {
-    gap: 16px;
-    justify-content: space-around;
-  }
-
-  .tile {
-    flex: 1 1 0;
-    min-width: 0;
   }
 
   .tileNum {
-    font-size: 40px;
-    letter-spacing: -0.5px;
+    font-size: 36px;
   }
 
   .tileLabel {
     font-size: 10px;
-    letter-spacing: 1.5px;
+  }
+}
+
+// ── Mobile (≤ 520px) ─────────────────────────────────────────────────────────
+@media (max-width: 520px) {
+  .inner {
+    padding: 18px 14px;
+    gap: 14px;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .countdownBox {
+    padding: 14px 10px 16px;
+    border-radius: 10px;
+    gap: 10px;
+  }
+
+  .tileNum {
+    font-size: clamp(22px, 7vw, 32px);
+  }
+
+  .tileLabel {
+    font-size: 9px;
+    letter-spacing: 1px;
   }
 
   .closesLabel {
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 1.8px;
   }
 }
 
-// ── Mobile phones (<= 520px) ─────────────────────────────────────────────────
-@media (max-width: 520px) {
-  .wrapper {
-    padding: 10px 8px 14px;
+// ── Ultra-compact (≤ 360px) ──────────────────────────────────────────────────
+@media (max-width: 360px) {
+  .inner {
+    padding: 14px 10px;
   }
 
+  .tileNum {
+    font-size: 20px;
+  }
+
+  .tileLabel {
+    font-size: 8px;
+    letter-spacing: 0.5px;
+  }
+}
+
+// ── Container queries – narrow SharePoint sections / nav toggle ───────────────
+@container (max-width: 900px) {
   .inner {
-    padding: 20px 14px;
+    flex-direction: column;
+    align-items: stretch;
+    padding: 24px 20px;
     gap: 18px;
   }
 
+  .leftCol {
+    display: contents;
+  }
+
+  .textBlock {
+    order: 1;
+  }
+
+  .countdownBox {
+    order: 2;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 16px 16px 18px;
+  }
+
   .applyBtn {
+    order: 3;
+    width: 100%;
     padding: 12px 20px;
   }
 
   .title {
-    font-size: 22px;
+    font-size: 20px;
+    max-width: 100%;
   }
 
   .description {
-    font-size: 14px;
-    margin-bottom: 4px;
-  }
-
-  .countdownBox {
-    padding: 16px 12px 18px;
-    border-radius: 12px;
-    gap: 12px;
-  }
-
-  .tilesRow {
-    gap: 8px;
-    justify-content: space-between;
-  }
-
-  .tile {
-    flex: 1 1 0;
-    min-width: 0;
+    max-width: 100%;
   }
 
   .tileNum {
-    font-size: clamp(24px, 7vw, 32px);
-    letter-spacing: -0.5px;
+    font-size: 36px;
+  }
+
+  .tileLabel {
+    font-size: 10px;
+  }
+}
+
+@container (max-width: 480px) {
+  .inner {
+    padding: 16px 12px;
+    gap: 12px;
+  }
+
+  .title {
+    font-size: 17px;
+  }
+
+  .tileNum {
+    font-size: clamp(20px, 7cqi, 30px);
   }
 
   .tileLabel {
@@ -375,200 +381,5 @@ $closes-col:  #6FF0EE;   // closing date colour inside navy box
   .closesLabel {
     font-size: 10px;
     letter-spacing: 1.4px;
-  }
-}
-
-// ── Ultra-compact phones (<= 360px) ──────────────────────────────────────────
-@media (max-width: 360px) {
-  .inner {
-    padding: 16px 10px;
-  }
-
-  .countdownBox {
-    padding: 14px 8px 16px;
-  }
-
-  .tilesRow {
-    gap: 4px;
-  }
-
-  .tileNum {
-    font-size: 22px;
-  }
-
-  .tileLabel {
-    font-size: 8px;
-    letter-spacing: 0.5px;
-  }
-}
-
-// ── Container query fallback for narrow SharePoint sections (e.g. 1/3 column) ──
-@container (max-width: 720px) {
-  .card {
-  min-height: 400px;            // was 480px
-}
-
-.inner {
-  gap: 40px;
-  padding: 40px 56px;           // was 48px 72px
-}
-
-.topLabel {
-  font-size: 13px;
-  letter-spacing: 2.6px;
-}
-
-.title {
-  font-size: 34px;              // was 40px
-  max-width: 480px;
-}
-
-.description {
-  font-size: 17px;              // was 20px
-  max-width: 480px;
-}
-
-.applyBtn {
-  padding: 14px 26px;           // was 18px 30px
-  font-size: 15px;              // was 17px
-}
-
-.countdownBox {
-  width: 48%;                   // was 54%
-  min-width: 400px;
-  padding: 24px 36px 24px;      // was 30px 48px 28px
-}
-
-.closesLabel {
-  font-size: 13px;
-  letter-spacing: 2.4px;
-}
-
-.tilesRow {
-  gap: 28px;                    // was 36px
-}
-
-.tile {
-  min-width: 76px;              // was 90px
-}
-
-.tileNum {
-  font-size: 48px;              // was 58px
-}
-
-.tileLabel {
-  font-size: 12px;
-  letter-spacing: 2px;
-}
-}
-
-@container (max-width: 440px) {
-  .inner {
-    padding: 18px 12px;
-    gap: 16px;
-  }
-
-  .title {
-    font-size: 20px;
-  }
-
-  .countdownBox {
-    padding: 16px 10px 18px;
-    border-radius: 12px;
-  }
-
-  .tilesRow {
-    gap: 6px;
-    justify-content: space-between;
-  }
-
-  .tileNum {
-    font-size: clamp(22px, 7cqi, 30px);
-  }
-
-  .tileLabel {
-    font-size: 9px;
-    letter-spacing: 1px;
-  }
-
-  .closesLabel {
-    font-size: 10px;
-    letter-spacing: 1.2px;
-  }
-}
-
-// ── Mobile fix: sabse end mein paste karo ────────────────────────────────────
-@media (max-width: 820px) {
-  .card {
-    min-height: 0;
-  }
-
-  .inner {
-    min-width: 0;
-    width: 100%;
-  }
-
-  .countdownBox {
-    width: 100%;
-    min-width: 0;
-    padding: 16px 12px 18px;
-  }
-
-  .tilesRow {
-    width: 100%;
-    gap: 6px;
-    justify-content: space-between;
-  }
-
-  .tile {
-    flex: 1 1 0;
-    min-width: 0;
-  }
-
-  .tileNum {
-    font-size: clamp(24px, 8vw, 36px);
-  }
-
-  .tileLabel {
-    font-size: 9px;
-    letter-spacing: 1px;
-  }
-}
-
-// SharePoint ke narrow column ke liye same fix
-@container (max-width: 720px) {
-  .card {
-    min-height: 0;
-  }
-
-  .inner {
-    min-width: 0;
-    width: 100%;
-  }
-
-  .countdownBox {
-    width: 100%;
-    min-width: 0;
-    padding: 16px 12px 18px;
-  }
-
-  .tilesRow {
-    width: 100%;
-    gap: 6px;
-    justify-content: space-between;
-  }
-
-  .tile {
-    flex: 1 1 0;
-    min-width: 0;
-  }
-
-  .tileNum {
-    font-size: clamp(22px, 8cqi, 34px);
-  }
-
-  .tileLabel {
-    font-size: 9px;
-    letter-spacing: 1px;
   }
 }
