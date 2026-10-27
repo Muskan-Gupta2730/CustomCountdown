@@ -161,7 +161,8 @@ $navy:        #120052;
 .tilesRow {
   display: flex;
   align-items: flex-end;
-  justify-content: space-between;
+  justify-content: center;
+  gap: 50px;
   width: 100%;
   box-sizing: border-box;
 }
@@ -171,7 +172,7 @@ $navy:        #120052;
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  flex: 1 1 0;
+  flex: 0 0 auto;
   text-align: center;
 }
 
