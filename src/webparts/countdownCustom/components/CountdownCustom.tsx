@@ -59,6 +59,35 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
   const [now, setNow]       = React.useState<number>(Date.now());
   const [offset, setOffset] = React.useState<number>(0);
 
+  // ── Full-bleed: measure actual left offset of the web part zone ───────────
+  const wrapperRef = React.useRef<HTMLDivElement>(null);
+  const [bleed, setBleed] = React.useState<{ left: number; right: number }>({ left: 0, right: 0 });
+
+  React.useEffect(() => {
+    const recalc = (): void => {
+      const el = wrapperRef.current;
+      if (!el) return;
+      const elRect = el.getBoundingClientRect();
+      const newLeft  = Math.max(0, elRect.left);
+      const newRight = Math.max(0, window.innerWidth - elRect.right);
+      setBleed(prev =>
+        prev.left === newLeft && prev.right === newRight
+          ? prev
+          : { left: newLeft, right: newRight }
+      );
+    };
+
+    recalc();
+    const ro = new ResizeObserver(recalc);
+    const parent = wrapperRef.current?.parentElement;
+    if (parent) ro.observe(parent);
+    window.addEventListener('resize', recalc);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', recalc);
+    };
+  }, []);
+
   // ── Fetch list data ────────────────────────────────────────────────────────
   React.useEffect(() => {
     if (!props.listTitle) { setItems([]); setError(''); return; }
@@ -186,8 +215,14 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
   const descriptionText = item.description || props.description || '';
   const activeBg = props.backgroundImageUrl || defaultBgImage;
 
+  const bleedStyle: React.CSSProperties = {
+    marginLeft:  `-${bleed.left}px`,
+    marginRight: `-${bleed.right}px`,
+    width:       `calc(100% + ${bleed.left + bleed.right}px)`,
+  };
+
   return (
-    <div className={styles.wrapper}>
+    <div className={styles.wrapper} ref={wrapperRef} style={bleedStyle}>
       <div className={styles.card}>
 
         {/* ── Background image ─────────────────────────── */}
@@ -198,30 +233,32 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
           />
         )}
 
-        {/* ── Main content row ─────────────────────────────────────────────── */}
+        {/* ── Grid layout ──────────────────────────────────────────────────── */}
         <div className={styles.inner}>
 
-          {/* LEFT – text block + button wrapped for responsive reordering */}
+          {/* LEFT – text + button */}
           <div className={styles.leftCol}>
             <div className={styles.textBlock}>
               {!expired && (
-                <p className={styles.topLabel}>{item.heading || props.label || 'Nominations close in'}</p>
+                <span className={styles.topLabel}>{item.heading || props.label || 'Nominations close in'}</span>
               )}
-              <h2 className={styles.title}>{item.title}</h2>
+              <h3 className={styles.title}>{item.title}</h3>
               {descriptionText && (
                 <p className={styles.description}>{descriptionText}</p>
               )}
             </div>
             {!expired && item.link && (
-              <a
-                className={styles.applyBtn}
-                href={item.link}
-                target="_blank"
-                rel="noopener noreferrer"
-                data-interception="off"
-              >
-                {item.buttonText || props.buttonText || 'Apply now'}
-              </a>
+              <div className={styles.btnRow}>
+                <a
+                  className={styles.applyBtn}
+                  href={item.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  data-interception="off"
+                >
+                  {item.buttonText || props.buttonText || 'Nominate a colleague'}
+                </a>
+              </div>
             )}
           </div>
 
