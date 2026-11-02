@@ -68,6 +68,12 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
       const el = wrapperRef.current;
       if (!el) return;
       const elRect = el.getBoundingClientRect();
+      // On mobile screens, in SharePoint mobile preview, or in narrow columns, disable full bleed to prevent overflow
+      const isMobileOrNarrow = window.innerWidth <= 768 || elRect.width <= 768 || (el.parentElement && el.parentElement.clientWidth <= 768);
+      if (isMobileOrNarrow) {
+        setBleed(prev => (prev.left === 0 && prev.right === 0 ? prev : { left: 0, right: 0 }));
+        return;
+      }
       const newLeft  = Math.max(0, elRect.left);
       const newRight = Math.max(0, window.innerWidth - elRect.right);
       setBleed(prev =>
@@ -215,11 +221,16 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
   const descriptionText = item.description || props.description || '';
   const activeBg = props.backgroundImageUrl || defaultBgImage;
 
-  const bleedStyle: React.CSSProperties = {
-    marginLeft:  `-${bleed.left}px`,
-    marginRight: `-${bleed.right}px`,
-    width:       `calc(100% + ${bleed.left + bleed.right}px)`,
-  };
+  const bleedStyle: React.CSSProperties = (bleed.left > 0 || bleed.right > 0)
+    ? {
+        marginLeft:  `-${bleed.left}px`,
+        marginRight: `-${bleed.right}px`,
+        width:       `calc(100% + ${bleed.left + bleed.right}px)`,
+      }
+    : {
+        width: '100%',
+        margin: '0',
+      };
 
   return (
     <div className={styles.wrapper} ref={wrapperRef} style={bleedStyle}>

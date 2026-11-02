@@ -149,12 +149,12 @@ $navy:        #120052;
 // "CLOSES 31 OCT 2026"
 .closesLabel {
   font-size: 11px;
-  font-weight: 450;
+  font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
   color: $closes-col;
   text-align: center;
-  font: bold;
+  white-space: nowrap;
 }
 
 // Tiles row
@@ -162,7 +162,7 @@ $navy:        #120052;
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  gap: 50px;
+  gap: clamp(20px, 3.5cqi, 48px);
   width: 100%;
   box-sizing: border-box;
 }
@@ -173,6 +173,7 @@ $navy:        #120052;
   align-items: center;
   gap: 2px;
   flex: 0 0 auto;
+  min-width: 50px;
   text-align: center;
 }
 
@@ -213,15 +214,16 @@ $navy:        #120052;
   color: $sirva-blue;
 }
 
-// ── Responsive: stack below 700px viewport ───────────────────────────────────
-@media (max-width: 700px) {
+// ── Responsive: mobile & narrow viewports (≤ 768px) ──────────────────────────
+@media (max-width: 768px) {
   .card {
-    padding: 20px 20px;
+    padding: 20px 18px;
+    border-radius: 6px;
   }
 
   .inner {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 14px;
   }
 
   // On mobile: text → timer → button
@@ -233,55 +235,160 @@ $navy:        #120052;
     display: contents;
   }
 
-  .topLabel   { order: 1; }
-  .title      { order: 2; }
-  .description{ order: 3; }
-  .countdownBox { order: 4; }
-  .btnRow     { order: 5; margin-top: 0; }
+  .topLabel {
+    order: 1;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    margin: 0;
+  }
 
-  .applyBtn {
-    width: 100%;
-    justify-content: center;
+  .title {
+    order: 2;
+    margin: 0;
+    font-size: clamp(19px, 5.2vw, 23px);
+    line-height: 1.25;
+  }
+
+  .description {
+    order: 3;
+    margin: 0;
+    font-size: clamp(13px, 3.6vw, 15px);
+    line-height: 1.45;
   }
 
   .countdownBox {
-    padding: 14px 16px;
+    order: 4;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 14px 14px 16px;
+    gap: 10px;
+    border-radius: 8px;
+  }
+
+  .closesLabel {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  .tilesRow {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: clamp(4px, 2.5vw, 14px);
+  }
+
+  .tile {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    gap: 3px;
   }
 
   .tileNum {
-    font-size: clamp(24px, 8vw, 36px);
+    font-size: clamp(24px, 7.5vw, 34px);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .tileLabel {
+    font-size: clamp(9px, 2.5vw, 11px);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+
+  .btnRow {
+    order: 5;
+    margin-top: 2px;
+    width: 100%;
+  }
+
+  .applyBtn {
+    width: 100%;
+    min-height: 44px;
+    height: auto;
+    padding: 10px 16px;
+    justify-content: center;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 4px;
   }
 }
 
+// ── Mobile phones (≤ 420px): Samsung, iPhone SE / Mini ───────────────────────
 @media (max-width: 420px) {
   .card {
     padding: 16px 14px;
     border-radius: 4px;
   }
 
+  .countdownBox {
+    padding: 12px 10px 14px;
+    gap: 8px;
+  }
+
+  .tilesRow {
+    gap: 4px;
+  }
+
   .tileNum {
-    font-size: clamp(20px, 7vw, 28px);
+    font-size: clamp(21px, 6.8vw, 27px);
+  }
+
+  .tileLabel {
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+  }
+
+  .closesLabel {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+}
+
+// ── Ultra-compact phones (≤ 340px) ──────────────────────────────────────────
+@media (max-width: 340px) {
+  .card {
+    padding: 12px 10px;
+  }
+
+  .countdownBox {
+    padding: 10px 6px 12px;
+    gap: 6px;
+  }
+
+  .tilesRow {
+    gap: 2px;
+  }
+
+  .tileNum {
+    font-size: 19px;
   }
 
   .tileLabel {
     font-size: 8px;
-    letter-spacing: 0.12em;
+    letter-spacing: 0.06em;
   }
 
   .closesLabel {
-    font-size: 9px;
+    font-size: 9.5px;
   }
 }
 
-// ── Container queries — handles nav open/close without viewport change ────────
-@container (max-width: 680px) {
+// ── Container queries — handles SharePoint Mobile preview, 1/3 column & nav toggle ──
+@container (max-width: 768px) {
   .card {
-    padding: 20px 20px;
+    padding: 20px 18px;
+    border-radius: 6px;
   }
 
   .inner {
     grid-template-columns: 1fr;
-    gap: 16px;
+    gap: 14px;
   }
 
   .leftCol {
@@ -292,33 +399,144 @@ $navy:        #120052;
     display: contents;
   }
 
-  .topLabel    { order: 1; }
-  .title       { order: 2; }
-  .description { order: 3; }
-  .countdownBox{ order: 4; }
-  .btnRow      { order: 5; margin-top: 0; }
+  .topLabel {
+    order: 1;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    margin: 0;
+  }
 
-  .applyBtn {
-    width: 100%;
-    justify-content: center;
+  .title {
+    order: 2;
+    margin: 0;
+    font-size: clamp(19px, 5.2cqi, 23px);
+    line-height: 1.25;
+  }
+
+  .description {
+    order: 3;
+    margin: 0;
+    font-size: clamp(13px, 3.6cqi, 15px);
+    line-height: 1.45;
   }
 
   .countdownBox {
-    padding: 14px 16px;
+    order: 4;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 14px 14px 16px;
+    gap: 10px;
+    border-radius: 8px;
+  }
+
+  .closesLabel {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+  }
+
+  .tilesRow {
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: clamp(4px, 2.5cqi, 14px);
+  }
+
+  .tile {
+    flex: 1 1 0;
+    min-width: 0;
+    text-align: center;
+    gap: 3px;
+  }
+
+  .tileNum {
+    font-size: clamp(24px, 7.5cqi, 34px);
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .tileLabel {
+    font-size: clamp(9px, 2.5cqi, 11px);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+  }
+
+  .btnRow {
+    order: 5;
+    margin-top: 2px;
+    width: 100%;
+  }
+
+  .applyBtn {
+    width: 100%;
+    min-height: 44px;
+    height: auto;
+    padding: 10px 16px;
+    justify-content: center;
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 4px;
   }
 }
 
-@container (max-width: 400px) {
+@container (max-width: 420px) {
+  .card {
+    padding: 16px 14px;
+    border-radius: 4px;
+  }
+
+  .countdownBox {
+    padding: 12px 10px 14px;
+    gap: 8px;
+  }
+
+  .tilesRow {
+    gap: 4px;
+  }
+
   .tileNum {
-    font-size: clamp(18px, 7cqi, 26px);
+    font-size: clamp(21px, 6.8cqi, 27px);
+  }
+
+  .tileLabel {
+    font-size: 8.5px;
+    letter-spacing: 0.08em;
+  }
+
+  .closesLabel {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+}
+
+@container (max-width: 340px) {
+  .card {
+    padding: 12px 10px;
+  }
+
+  .countdownBox {
+    padding: 10px 6px 12px;
+    gap: 6px;
+  }
+
+  .tilesRow {
+    gap: 2px;
+  }
+
+  .tileNum {
+    font-size: 19px;
   }
 
   .tileLabel {
     font-size: 8px;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.06em;
   }
 
   .closesLabel {
-    font-size: 9px;
+    font-size: 9.5px;
   }
 }
