@@ -118,15 +118,26 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
         return res.json();
       })
       .then((json: { value: IListRow[] }) => {
-        const currentPath = normalizePath(window.location.pathname);
-        const isWorkbench  = currentPath.indexOf('workbench.aspx') > -1;
+        // Get just the filename of the current page e.g. "SirvaLife.aspx"
+        const currentPage = window.location.pathname
+          .split('/')
+          .filter(Boolean)
+          .pop()
+          ?.toLowerCase() || '';
+
+        const isWorkbench = currentPage === 'workbench.aspx' ||
+                            window.location.pathname.toLowerCase().indexOf('workbench.aspx') > -1;
 
         const matched = (json.value || []).filter((r) => {
-          const pages = (r.PageLinks || '')
+          // PageName can hold multiple page filenames separated by comma, semicolon, space or pipe
+          // e.g. "SirvaLife.aspx, MyCountry.aspx" or "SirvaLife.aspx|MyCountry.aspx"
+          const pageNames = (r.PageName || '')
             .split(/[\s,;|]+/)
-            .map(normalizePath)
-            .filter((x) => x !== '');
-          return isWorkbench || pages.length === 0 || pages.indexOf(currentPath) > -1;
+            .map((p: string) => p.trim().toLowerCase())
+            .filter((p: string) => p !== '');
+
+          // On workbench show everything; if PageName is empty show everywhere; otherwise match
+          return isWorkbench || pageNames.length === 0 || pageNames.indexOf(currentPage) > -1;
         });
 
         const list: ICountdownItem[] = matched
