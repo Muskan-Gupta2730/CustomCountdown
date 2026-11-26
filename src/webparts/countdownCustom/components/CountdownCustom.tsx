@@ -195,10 +195,6 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
     </div>
   );
 
-  if (!props.listTitle)          return renderMessage('Open the web part settings and enter the SharePoint list name.');
-  if (loading && !items.length)  return renderMessage('Loading…');
-  if (error)                     return renderMessage(error);
-
   const serverNow = now + offset;
 
   const upcoming      = items.filter((i) => i.targetMs > serverNow)[0];
@@ -206,6 +202,48 @@ const CountdownCustom: React.FC<ICountdownCustomProps> = (props) => {
     .filter((i) => i.targetMs <= serverNow && serverNow - i.targetMs < HIDE_AFTER_MS)
     .sort((a, b) => b.targetMs - a.targetMs)[0];
   const item = upcoming || recentlyEnded;
+
+  // ── Notify web part & hide empty section after 24h / no item ──────────────
+  React.useEffect(() => {
+    if (props.isEditMode) {
+      props.onVisibilityChange?.(true);
+      return;
+    }
+
+    const hasActiveItem = Boolean(item);
+    props.onVisibilityChange?.(hasActiveItem);
+
+    if (!hasActiveItem && props.domElement) {
+      props.domElement.style.display = 'none';
+      const sec = props.domElement.closest(
+        '[data-sp-feature-tag="CanvasSection"], .CanvasSection, .CanvasZone, [data-automation-id="CanvasSection"]'
+      ) as HTMLElement | null;
+      if (sec) {
+        const otherControls = Array.from(
+          sec.querySelectorAll('[data-sp-feature-tag="CanvasControl"], .CanvasControl, [data-automation-id="CanvasControl"]')
+        ).filter(c => !c.contains(props.domElement!) && (c as HTMLElement).style.display !== 'none');
+        if (otherControls.length === 0) {
+          sec.style.display = 'none';
+        }
+      }
+    }
+  }, [item, props.isEditMode, props.onVisibilityChange, props.domElement]);
+
+  if (!props.listTitle) {
+    return props.isEditMode
+      ? renderMessage('Open the web part settings and enter the SharePoint list name.')
+      : <></>;
+  }
+  if (loading && !items.length) {
+    return props.isEditMode
+      ? renderMessage('Loading…')
+      : <></>;
+  }
+  if (error) {
+    return props.isEditMode
+      ? renderMessage(error)
+      : <></>;
+  }
 
   if (!item) {
     return props.isEditMode

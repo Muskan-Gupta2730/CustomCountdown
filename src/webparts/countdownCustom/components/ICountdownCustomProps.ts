@@ -15,4 +15,6 @@ export interface ICountdownCustomProps extends ICountdownCustomWebPartProps {
   spHttpClient: SPHttpClient;
   siteUrl: string;
   isEditMode: boolean;
+  domElement?: HTMLElement;
+  onVisibilityChange?: (visible: boolean) => void;
 }
